@@ -6,6 +6,7 @@ Please see http://marekburiak.github.io/ILI9341_due
 
 Version History:
 ```
+bla
 v0.92.002 - Fixed drawArc
 		  - Added setArcParams function to change maxArcAngle and arcAngleOffset at runtime
 
