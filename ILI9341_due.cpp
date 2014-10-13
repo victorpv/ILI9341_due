@@ -387,7 +387,7 @@ void ILI9341_due::fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t 
 void ILI9341_due::setRotation(uint8_t m)
 {
 	writecommand_cont(ILI9341_MADCTL);
-	rotation = m % 4; // can't be higher than 3
+	//rotation = m % 4; // can't be higher than 3
 	switch (rotation) {
 	case 0:
 		writedata8_last(MADCTL_MX | MADCTL_BGR);
@@ -395,16 +395,19 @@ void ILI9341_due::setRotation(uint8_t m)
 		_height = ILI9341_TFTHEIGHT;
 		break;
 	case 1:
+	case 90:
 		writedata8_last(MADCTL_MV | MADCTL_BGR);
 		_width  = ILI9341_TFTHEIGHT;
 		_height = ILI9341_TFTWIDTH;
 		break;
 	case 2:
+	case 180:
 		writedata8_last(MADCTL_MY | MADCTL_BGR);
 		_width  = ILI9341_TFTWIDTH;
 		_height = ILI9341_TFTHEIGHT;
 		break;
 	case 3:
+	case 270:
 		writedata8_last(MADCTL_MX | MADCTL_MY | MADCTL_MV | MADCTL_BGR);
 		_width  = ILI9341_TFTHEIGHT;
 		_height = ILI9341_TFTWIDTH;
@@ -628,7 +631,7 @@ void ILI9341_due::drawArcOffsetted(uint16_t cx, uint16_t cy, uint16_t radius, ui
 							y = y2s;	// reset y and continue with pixel by pixel search
 							y2EndSearching = true;
 						}
-						
+
 						//Serial << "Upper line length: " << (y1e - y1s) << " Setting y to " << y << endl;
 					}
 					else if(y2StartFound && !y2EndSearching)

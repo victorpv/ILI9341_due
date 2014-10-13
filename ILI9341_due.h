@@ -156,6 +156,11 @@ MIT license, all text above must be included in any redistribution
 #define ILI9341_YELLOW  0xFFE0
 #define ILI9341_WHITE   0xFFFF
 
+#define ILI9341_ROTATION_0 0
+#define ILI9341_ROTATION_90 1
+#define ILI9341_ROTATION_180 2
+#define ILI9341_ROTATION_270 3
+
 typedef uint8_t pwrLevel;
 
 // Normal Mode On (full display), Idle Mode Off, Sleep Out. 

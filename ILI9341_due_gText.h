@@ -150,17 +150,29 @@ typedef enum  {
 
 
 typedef enum  {
-gTextAlignTopLeft,
-gTextAlignTopCenter,
-gTextAlignTopRight,
-gTextAlignMiddleLeft,
-gTextAlignMiddleCenter,
-gTextAlignMiddleRight,
-gTextAlignBottomLeft,
-gTextAlignBottomCenter,
-gTextAlignBottomRight
+	gTextAlignTopLeft,
+	gTextAlignTopCenter,
+	gTextAlignTopRight,
+	gTextAlignMiddleLeft,
+	gTextAlignMiddleCenter,
+	gTextAlignMiddleRight,
+	gTextAlignBottomLeft,
+	gTextAlignBottomCenter,
+	gTextAlignBottomRight
 } gTextAlign;
 
+typedef enum  {
+	gTextPivotDefault,
+	gTextPivotTopLeft,
+	gTextPivotTopCenter,
+	gTextPivotTopRight,
+	gTextPivotMiddleLeft,
+	gTextPivotMiddleCenter,
+	gTextPivotMiddleRight,
+	gTextPivotBottomLeft,
+	gTextPivotBottomCenter,
+	gTextPivotBottomRight
+} gTextPivot;
 
 
 /*
@@ -178,14 +190,14 @@ gTextAlignBottomRight
 * ANSI EraseInLine terminal primitive: CSI n K
 *
 */
-enum eraseLine_t {
-	eraseTO_EOL, 	/**< Erase From cursor to end of Line */
-	eraseFROM_BOL,	/**< Erase From Begining of Line to Cursor*/
-	eraseFULL_LINE	/**< Erase Entire line */
+enum gTextEraseLine {
+	gTextEraseToEOL, 	/**< Erase From cursor to end of Line */
+	gTextEraseFromBOL,	/**< Erase From Begining of Line to Cursor*/
+	gTextEraseFullLine	/**< Erase Entire line */
 };
 
-typedef const uint8_t* Font_t;  	
-//typedef uint8_t (*FontCallback)(Font_t);
+typedef const uint8_t* gTextFont;  	
+//typedef uint8_t (*FontCallback)(gTextFont);
 
 
 //static glcd_Device    *device;              // static pointer to the device instance
@@ -218,7 +230,7 @@ private:
 	//FontCallback	ucg_pgm_read;     // now static, move back here if each instance needs its own callback
 	uint16_t _fontColor;
 	uint16_t _fontBgColor;
-	Font_t _font;
+	gTextFont _font;
 	area _area;
 	int16_t	_x;
 	int16_t	_y;
@@ -235,40 +247,59 @@ private:
 	// Scroll routines are private for now
 	void ScrollUp(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t pixels, uint8_t color);
 	void ScrollDown(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t pixels, uint8_t color);
+	void applyPivot(char *str, gTextPivot pivot);
 
 public:
 	ILI9341_due_gText(ILI9341_due *ili); // default - uses the entire display
 	ILI9341_due_gText(ILI9341_due *ili, int16_t x1, int16_t y1, int16_t x2, int16_t y2); //, textMode mode=DEFAULT_SCROLLDIR);
-	
-	ILI9341_due_gText(ILI9341_due *ili, int16_t x1, int16_t y1, int16_t columns, int16_t rows, Font_t font); //, textMode mode=DEFAULT_SCROLLDIR);
-	
-	
+
+	ILI9341_due_gText(ILI9341_due *ili, int16_t x1, int16_t y1, int16_t columns, int16_t rows, gTextFont font); //, textMode mode=DEFAULT_SCROLLDIR);
+
+
 	bool defineArea(int16_t x1, int16_t y1, int16_t x2, int16_t y2); //, textMode mode=DEFAULT_SCROLLDIR);
-	bool defineArea(int16_t x1, int16_t y1, int16_t columns, int16_t rows, Font_t font); //, textMode mode=DEFAULT_SCROLLDIR);
+	bool defineArea(int16_t x1, int16_t y1, int16_t columns, int16_t rows, gTextFont font); //, textMode mode=DEFAULT_SCROLLDIR);
 	void clearArea(uint16_t color);
 
 	// Font Functions
-	void selectFont(Font_t font);
-	void selectFont(Font_t font, uint16_t color);
+	void selectFont(gTextFont font);
+	void selectFont(gTextFont font, uint16_t color, uint16_t backgroundColor);
 	void setFontColor(uint16_t color);
 	void setFontColor(uint8_t R, uint8_t G, uint8_t B);
 	void setFontColor(uint16_t color, uint16_t backgroundColor);
 	void setFontColor(uint8_t R, uint8_t G, uint8_t B, uint8_t bgR, uint8_t bgG, uint8_t bgB);
 	void setFontLetterSpacing(uint8_t letterSpacing);
+	uint8_t getFontLetterSpacing()	{
+		return _letterSpacing; 
+	};
 	void setFontMode(uint8_t fontMode);
-	
+
 	int putChar(uint8_t c);
 	void puts(char *str);
 	void puts(const String &str); // for Arduino String Class
 	void puts_P(PGM_P str);
-	void drawString(char *str, int16_t x, int16_t y);
+
+
 	void drawString(String &str, int16_t x, int16_t y); // for Arduino String class
 	void drawString_P(PGM_P str, int16_t x, int16_t y);
-	
+
+	void drawString(char *str, int16_t x, int16_t y);
+	void drawString(char *str, int16_t x, int16_t y, uint16_t pixelsClearedOnLeft, uint16_t pixelsClearedOnRight);
 	void drawString(char *str, gTextAlign align);
-	void drawString(char *str, gTextAlign align, uint16_t clearBeforeAfterWidth);
-	void drawString(char *str, gTextAlign align, const uint16_t offsetX, const uint16_t offsetY);
-	void drawString(char *str, gTextAlign align, const uint16_t offsetX, const uint16_t offsetY, uint16_t clearBeforeAfterWidth);
+	void drawString(char *str, gTextAlign align, gTextEraseLine eraseLine);
+	void drawString(char *str, gTextAlign align, uint16_t pixelsClearedOnLeft, uint16_t pixelsClearedOnRight);
+
+	void drawStringOffseted(char *str, gTextAlign align, uint16_t offsetX, uint16_t offsetY);
+	void drawStringOffseted(char *str, gTextAlign align, uint16_t offsetX, uint16_t offsetY, gTextEraseLine eraseLine);
+	void drawStringOffseted(char *str, gTextAlign align, uint16_t offsetX, uint16_t offsetY, uint16_t pixelsClearedOnLeft, uint16_t pixelsClearedOnRight);
+
+	void drawStringPivoted(char *str, int16_t x, int16_t y, gTextPivot pivot);
+	void drawStringPivoted(char *str, gTextAlign align, gTextPivot pivot);
+	void drawStringPivoted(char *str, gTextAlign align, gTextPivot pivot, gTextEraseLine eraseLine);
+	void drawStringPivoted(char *str, gTextAlign align, gTextPivot pivot, uint16_t pixelsClearedOnLeft, uint16_t pixelsClearedOnRight);
+
+	void drawStringPivotedOffseted(char *str, gTextAlign align, gTextPivot pivot, uint16_t offsetX, uint16_t offsetY);
+	void drawStringPivotedOffseted(char *str, gTextAlign align, gTextPivot pivot, uint16_t offsetX, uint16_t offsetY, gTextEraseLine eraseLine);
+	void drawStringPivotedOffseted(char *str, gTextAlign align, gTextPivot pivot, uint16_t offsetX, uint16_t offsetY, uint16_t pixelsClearedOnLeft, uint16_t pixelsClearedOnRight);
 
 	size_t write(uint8_t c);  // character output for print base class
 
@@ -276,14 +307,22 @@ public:
 	void cursorTo( int8_t column); // move cursor on the current row
 	void cursorToXY( int16_t x, int16_t y); // coordinates relative to active text area
 
-	uint8_t fontHeight();
-	uint8_t fontHeight(Font_t font);
+	inline __attribute__((always_inline))
+		uint8_t fontHeight()	{
+			return pgm_read_byte(_font+GTEXT_FONT_HEIGHT);
+	};
+
+	inline __attribute__((always_inline))
+		uint8_t fontHeight(gTextFont font) {
+			return pgm_read_byte(font+GTEXT_FONT_HEIGHT);
+	};
+
 	uint16_t charWidth(uint8_t c);
 	uint16_t stringWidth(const char* str);
 	uint16_t stringWidth_P(PGM_P str);
 	uint16_t stringWidth_P(String &str);
 
-	void eraseTextLine(uint16_t color, eraseLine_t type=eraseTO_EOL); //ansi like line erase function 
+	void eraseTextLine(uint16_t color, gTextEraseLine type=gTextEraseToEOL); //ansi like line erase function 
 	void eraseTextLine(uint16_t color, uint8_t row); // erase the entire text line in the given row and move cursor to left position
 
 	void printNumber(long n);
@@ -293,6 +332,40 @@ public:
 	bool defineArea(predefinedArea selection); //, textMode mode=DEFAULT_SCROLLDIR);
 	void setTextMode(textMode mode); // change to the given text mode
 #endif
+
+	static uint16_t charWidth(uint8_t c, gTextFont font)
+	{
+		int16_t width = 0;
+
+		if(isFixedWidthFont(font){
+			width = pgm_read_byte(font+GTEXT_FONT_FIXED_WIDTH);
+		} 
+		else{ 
+			// variable width font 
+			uint8_t firstChar = pgm_read_byte(font+GTEXT_FONT_FIRST_CHAR);
+			uint8_t charCount = pgm_read_byte(font+GTEXT_FONT_CHAR_COUNT);
+
+			// read width data
+			if(c >= firstChar && c < (firstChar+charCount)) {
+				c -= firstChar;
+				width = pgm_read_byte(font+GTEXT_FONT_WIDTH_TABLE+c);
+			}
+		}	
+		return width;
+	};
+
+	static uint16_t stringWidth(const char* str, gTextFont font, uint8_t letterSpacing)
+	{
+		uint16_t width = 0;
+
+		while(*str != 0) {
+			width += ILI9341_due_gText::charWidth(*str++, font) + letterSpacing;
+		}
+		if(width > 0)
+			width -= letterSpacing;
+
+		return width;
+	};
 
 	//#ifndef USE_ARDUINO_FLASHSTR	
 	//	// when the following function is supported in arduino it will be removed from this library
