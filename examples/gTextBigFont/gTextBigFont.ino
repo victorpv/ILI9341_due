@@ -6,10 +6,11 @@
 
 #include "fonts\jokerman_255.h"
 
-#define TFT_CS 10
-#define TFT_DC 9
+#define TFT_DC 10
+#define TFT_CS 8
+#define TFT_RST  9
 
-ILI9341_due myTFT(TFT_CS, TFT_DC);
+ILI9341_due myTFT(TFT_CS, TFT_DC, TFT_RST);
 ILI9341_due_gText t1(&myTFT);
 
 void setup()

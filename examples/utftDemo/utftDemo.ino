@@ -6,15 +6,21 @@
 #include <SPI.h>
 
 // ILI9341_due NEW lib by Marek Buriak http://marekburiak.github.io/ILI9341_due/
+#include <SPI.h> 
+#include <ILI_SdSpi.h>
+#include <ILI_SdFatConfig.h>
 #include <ILI9341_due_gText.h>
 #include <ILI9341_due.h>
 #include "fonts\Arial14.h"
 //#include "Streaming.h"
 // For the Adafruit shield, these are the default.
-#define TFT_DC 9
-#define TFT_CS 10
+
+#define TFT_DC 10
+#define TFT_CS 8
+#define rst  9
+
 // Use hardware SPI (on Uno, #13, #12, #11) and the above for CS/DC
-ILI9341_due tft = ILI9341_due(TFT_CS, TFT_DC);
+ILI9341_due tft = ILI9341_due(TFT_CS, TFT_DC, rst);
 
 ILI9341_due_gText t1(&tft);
 char textBuff[20];
@@ -38,10 +44,11 @@ uint16_t  colorFONDO=BLACK;
 
 void setup()
 {
+  delay (5000);
   randomSeed(analogRead(0));
 
    // TFT 2.2" SPI 
-  Serial.begin(9600);
+  Serial.begin(115200);
   tft.begin();
   tft.setRotation(iliRotation270);  
   tft.fillScreen(colorFONDO);
@@ -256,7 +263,6 @@ void ILI9341duenodelay()
   
 //ILI9341due NEW
   tft.fillRect(1,16,318,209,BLACK);      
-
 // Draw some random rectangles
   for (int i=0; i<100; i++)
   {
@@ -272,7 +278,6 @@ void ILI9341duenodelay()
 
 //ILI9341due NEW
   tft.fillRect(1,16,318,209,BLACK);      
-
 // Draw some random rounded rectangles
   for (int i=0; i<100; i++)
   {
@@ -282,9 +287,9 @@ void ILI9341duenodelay()
     x2=random(165);
     y2=random(115);
     tft.drawRoundRect(x, y, x2, y2,3,color);
+   
   }
  // delay(2000);
-
 
 //ILI9341due NEW
   tft.fillRect(1,16,318,209,BLACK);      

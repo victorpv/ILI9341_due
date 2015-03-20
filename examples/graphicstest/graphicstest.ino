@@ -15,20 +15,24 @@
 
 
 //#include <SPI.h>
+
+#include <SPI.h> 
 #include <ILI_SdSpi.h>
 #include <ILI_SdFatConfig.h>
 #include <ILI9341_due_gText.h>
 #include <ILI9341_due.h>
 
 // For the Adafruit shield, these are the default.
-#define TFT_DC 9
-#define TFT_CS 10
+#define TFT_DC 10
+#define TFT_CS 8
+#define rst  9
 
 // Use hardware SPI (on Uno, #13, #12, #11) and the above for CS/DC
-ILI9341_due tft = ILI9341_due(TFT_CS, TFT_DC);
+ILI9341_due tft = ILI9341_due(TFT_CS, TFT_DC, rst);
 
 void setup() {
-  Serial.begin(9600);
+  delay (5000);
+  Serial.begin(115200);
   while (!Serial) ; // wait for Arduino Serial Monitor
   Serial.println("ILI9341 Test!"); 
  
@@ -110,7 +114,7 @@ void loop(void) {
 
 unsigned long testFillScreen() {
   unsigned long start = micros();
-  tft.fillScreen(ILI9341_BLACK);
+//  tft.fillScreen(ILI9341_BLACK);
   tft.fillScreen(ILI9341_RED);
   tft.fillScreen(ILI9341_GREEN);
   tft.fillScreen(ILI9341_BLUE);

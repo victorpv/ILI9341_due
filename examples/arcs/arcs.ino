@@ -1,18 +1,22 @@
 
 //#include <SPI.h>
-#include <ILI_SdSpi.h>
-#include <ILI_SdFatConfig.h>
-#include <ILI9341_due_gText.h>
-#include <ILI9341_due.h>
-#include "fonts\Arial_bold_14.h"
+#include <SPI.h> 
+#include "ILI_SdSpi.h"
+#include "ILI_SdFatConfig.h"
+#include "ILI9341_due_gText.h"
+#include "ILI9341_due.h"
+#include "Arial_bold_14.h"
 #include "roboto16.h"
 #include "roboto32.h"
 #include "roboto70.h"
 
-#define TFT_DC 9
-#define TFT_CS 10
+#define TFT_DC 10
+#define TFT_CS 8
+#define rst  9
 
-ILI9341_due tft = ILI9341_due(TFT_CS, TFT_DC);
+// Use hardware SPI (on Uno, #13, #12, #11) and the above for CS/DC
+ILI9341_due tft = ILI9341_due(TFT_CS, TFT_DC, rst);
+
 char textBuff[20];
 
 ILI9341_due_gText t1(&tft);
@@ -233,7 +237,7 @@ void screenSensors()
 
 void loop()
 {
-
+  setup ();
 	/* add main program code here */
 
 }

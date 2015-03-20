@@ -12,9 +12,7 @@ products from Adafruit!
 Written by Limor Fried/Ladyada for Adafruit Industries.
 MIT license, all text above must be included in any redistribution
 ****************************************************/
-
-
-//#include <SPI.h>
+#include <SPI.h> 
 #include <ILI_SdSpi.h>
 #include <ILI_SdFatConfig.h>
 #include <ILI9341_due_gText.h>
@@ -22,11 +20,12 @@ MIT license, all text above must be included in any redistribution
 #include "fonts\Arial_bold_14.h"
 
 
-#define TFT_DC 9
-#define TFT_CS 10
+#define TFT_DC 10
+#define TFT_CS 8
+#define TFT_RST 9
 
 // Use hardware SPI (on Uno, #13, #12, #11) and the above for CS/DC
-ILI9341_due tft = ILI9341_due(TFT_CS, TFT_DC);
+ILI9341_due tft = ILI9341_due(TFT_CS, TFT_DC, TFT_RST);
 
 ILI9341_due_gText t1(&tft);
 long Screenfill,
