@@ -2,6 +2,7 @@
 ILI9341_due_.cpp - Arduino Due library for interfacing with ILI9341-based TFTs
 
 Copyright (c) 2014  Marek Buriak
+Modified 03/19/2015 by Victor Perez to add STM32F1 Maple mini DMA support
 
 This library is based on ILI9341_t3 library from Paul Stoffregen
 (https://github.com/PaulStoffregen/ILI9341_t3), Adafruit_ILI9341
@@ -46,6 +47,7 @@ MIT license, all text above must be included in any redistribution
 #include <SPI.h>
 #elif SPI_MODE_DMA
 #include "ILI_SdSpi.h"
+#include <libmaple/dma.h>
 #endif
 //#include "..\Streaming\Streaming.h"
 
@@ -270,7 +272,7 @@ void ILI9341_due::drawPixel_cont(int16_t x, int16_t y, uint16_t color) {
 void ILI9341_due::drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color)
 {
 	// Rudimentary clipping
-	if ((x >= _width) || (y >= _height)) return;
+	if ((x >= _width) || (y >= _height || h == 0)) return;
 	if ((y + h - 1) >= _height) h = _height - y;
 
 	setAddrAndRW_cont(x, y, x, y + h - 1);
@@ -289,7 +291,7 @@ void ILI9341_due::drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color)
 void ILI9341_due::drawFastVLine_cont_noFill(int16_t x, int16_t y, int16_t h, uint16_t color)
 {
 	// Rudimentary clipping
-	if ((x >= _width) || (y >= _height)) return;
+	if ((x >= _width) || (y >= _height || h == 0)) return;
 	if ((y + h - 1) >= _height) h = _height - y;
 
 	setAddrAndRW_cont(x, y, x, y + h - 1);
@@ -306,7 +308,7 @@ void ILI9341_due::drawFastVLine_cont_noFill(int16_t x, int16_t y, int16_t h, uin
 void ILI9341_due::drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color)
 {
 	// Rudimentary clipping
-	if ((x >= _width) || (y >= _height)) return;
+	if ((x >= _width) || (y >= _height || w == 0)) return;
 	if ((x + w - 1) >= _width)  w = _width - x;
 
 	setAddrAndRW_cont(x, y, x + w - 1, y);
@@ -347,7 +349,7 @@ void ILI9341_due::fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t 
 {
 	//Serial << "x:" << x << " y:" << y << " w:" << x << " h:" << h << " width:" << _width << " height:" << _height <<endl;
 	// rudimentary clipping (drawChar w/big text requires this)
-	if ((x >= _width) || (y >= _height)) return;
+	if ((x >= _width) || (y >= _height || w == 0 || h == 0)) return;
 	if ((x + w - 1) >= _width)  w = _width - x;
 	if ((y + h - 1) >= _height) h = _height - y;
 
@@ -1094,6 +1096,7 @@ void ILI9341_due::drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t 
 void ILI9341_due::drawRoundRect(int16_t x, int16_t y, int16_t w,
 	int16_t h, int16_t r, uint16_t color)
 {
+        if ( h <= 2 * r || w <= 2 * r) return;
 #if SPI_MODE_DMA
 	fillScanline(color, max(w, h));
 #endif

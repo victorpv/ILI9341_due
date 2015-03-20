@@ -41,14 +41,25 @@
 #endif  // ILI_USE_SOFTWARE_SPI
 #endif  // __AVR__
 // Due
-#if defined(__arm__) && !defined(CORE_TEENSY)
+#if defined(__arm__) && !defined(CORE_TEENSY) && !defined(__STM32F1__)
 #if ILI_DUE_SOFT_SPI
 #define ILI_USE_SOFTWARE_SPI 1
 #else  // ILI_DUE_SOFT_SPI
 /** Nonzero - use native SAM3X SPI */
 #define ILI_USE_NATIVE_SAM3X_SPI 1
 #endif  // ILI_DUE_SOFT_SPI
-#endif  // defined(__arm__) && !defined(CORE_TEENSY)
+#endif  // defined(__arm__) && !defined(CORE_TEENSY | __STM32F1__)
+
+// STM32F1 Maple Mini
+#if defined(__arm__) && defined(__STM32F1__)
+#if ILI_DUE_SOFT_SPI
+#define ILI_USE_SOFTWARE_SPI 1
+#else  // ILI_DUE_SOFT_SPI
+/** Nonzero - use native STM32F1 SPI */
+#define ILI_USE_NATIVE_STM32F1_SPI 1
+#endif  // ILI_DUE_SOFT_SPI
+#endif  // defined(__arm__) && defined(__STM32F1__)
+
 // Teensy 3.0
 #if defined(__arm__) && defined(CORE_TEENSY)
 #if ILI_TEENSY3_SOFT_SPI
@@ -71,6 +82,10 @@
 #ifndef ILI_USE_NATIVE_SAM3X_SPI
 #define ILI_USE_NATIVE_SAM3X_SPI 0
 #endif  // ILI_USE_NATIVE_SAM3X_SPI
+
+#ifndef ILI_USE_NATIVE_STM32F1_SPI
+#define ILI_USE_NATIVE_STM32F1_SPI 0
+#endif  // ILI_USE_NATIVE_STM32F1_SPI
 
 #ifndef ILI_USE_NATIVE_TEENSY3_SPI
 #define ILI_USE_NATIVE_TEENSY3_SPI 0
@@ -123,7 +138,7 @@ class ILI_SdSpi {
    * \param[in] buf Buffer for data to be sent.   
    * \param[in] n Number of bytes to send.
    */   
-  void send(const uint8_t* buf, size_t n);
+  void send(uint8_t* buf, size_t n);
 };
 //------------------------------------------------------------------------------
 // Use of inline for AVR results in up to 10% better write performance.
